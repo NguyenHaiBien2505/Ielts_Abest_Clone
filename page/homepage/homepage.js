@@ -38,4 +38,45 @@
             alertBox.classList.add('d-none');
         }, 6000);
     });
+
+    function initScrollReveal() {
+        const targets = [
+            ...document.querySelectorAll('section'),
+            ...document.querySelectorAll('header'),
+            ...document.querySelectorAll('footer'),
+            ...document.querySelectorAll('.card'),
+            ...document.querySelectorAll('.mobile-menu-wrap'),
+        ];
+
+        const revealElements = Array.from(new Set(targets))
+            .filter((el) => el instanceof HTMLElement)
+            .filter((el) => !el.classList.contains('no-reveal'));
+
+        revealElements.forEach((el) => {
+            if (!el.classList.contains('scroll-reveal')) {
+                el.classList.add('scroll-reveal');
+            }
+        });
+
+        if (!('IntersectionObserver' in window)) {
+            revealElements.forEach((el) => el.classList.add('reveal-active'));
+            return;
+        }
+
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                    obs.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.15,
+            rootMargin: '0px 0px -10% 0px',
+        });
+
+        revealElements.forEach((el) => observer.observe(el));
+    }
+
+    initScrollReveal();
 })();
